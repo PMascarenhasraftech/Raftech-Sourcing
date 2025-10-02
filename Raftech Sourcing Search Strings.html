@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Boolean Search String Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4; /* Original light grey background */
+      padding: 30px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+    }
+    label, select, textarea, button {
+      display: block;
+      margin: 15px auto;
+      max-width: 600px;
+      width: 100%;
+      text-align: left;
+    }
+    select, textarea, button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 6px; /* Normal rectangle */
+      border: 1px solid #ccc;
+    }
+    textarea {
+      height: 120px;
+      resize: none;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2> Raftech Sourcing - Search String Generator</h2><br>
+
+  <label for="role">Select Skill / Role:</label>
+  <select id="role" onchange="generateBoolean()">
+    <option value="">-- Choose a Skill / Role --</option>
+  </select>
+<br>
+<br>
+  <label for="boolean"> Boolean String:</label>
+  <textarea id="boolean" readonly></textarea>
+
+  <button onclick="copyToClipboard()">Copy to Clipboard</button>
+
+  <script>
+    const booleanStrings = {
+      ".Net_Developer": '(".NET" OR "Dotnet" OR "dot net") AND (C#)',
+      AI_Engineer: '("AI Engineer" OR "Artificial Intelligence Engineer" OR "AI Software Developer" OR "AI Specialist")',
+      Android_Developer: '(Android) AND (Kotlin)',
+      Application_Security_Engineer: '("Application Security Engineer" OR "AppSec Engineer" OR "Secure Software Engineer" OR "Product Security Engineer" OR "Software Security Engineer") AND (OWASP OR Penetration Testing OR SAST)',
+      Azure_Data_Engineer: '("Azure Data Engineer") AND ("Azure Data Factory" OR "ADF" OR "Azure Synapse" OR "Databricks" OR "Azure Data Lake" OR "PySpark")',
+      BI_Analyst: '("Business Intelligence Analyst" OR "BI Analyst") AND (PowerBI OR Tableau OR SQL)',
+      Cloud_Architect: '("Cloud Architect") AND ("AWS" OR "Amazon Web Services" OR "Azure" OR "GCP" OR "Google Cloud Platform")',
+      Cloud_Security_Engineer: '("Cloud Security") AND ("AWS" OR "Amazon Web Services" OR "Azure" OR "GCP" OR "Google Cloud Platform")',
+      Cybersecurity_Analyst: '("Cybersecurity Analyst" OR "Information Security Analyst" OR "Security Operations Analyst" OR "SOC Analyst" OR "Security Analyst") AND (SIEM OR Threat OR "Incident Response")',
+      Data_analyst: '("Data Analyst") AND (SQL OR Excel OR Tableau OR PowerBI)',
+      Data_architect: '("Data Architect") AND ("SQL" OR "NoSQL" OR "Snowflake" OR "Redshift" OR "BigQuery" OR "Azure Synapse" OR "Databricks" OR "Oracle" OR "PostgreSQL") AND ("Data Modeling" OR "ETL" OR "Data Warehousing" OR "Data Governance" OR "Metadata Management" OR "Data Pipelines")',
+      Data_engineer: '("Data Engineer" OR "ETL Developer" OR "Big Data Engineer" OR "Data Pipeline Engineer" OR "Data Integration Engineer") AND (ETL OR Python OR Spark OR Kafka)',
+      Data_Governance_Specialist: '("Data Governance Specialist") AND ("Data Governance" OR Compliance OR Policies)',
+      Data_Quality_Analyst: '("Data Quality Analyst") AND ("Data Quality" OR Validation OR Testing)',
+      Data_Scientist: '("Data Scientist") AND ("Python" OR "R" OR "SQL" OR "TensorFlow" OR "PyTorch" OR "Pandas" OR "NumPy")',
+      Data_Visualization_Specialist: '("Data Visualization Specialist") AND (Tableau OR PowerBI OR D3.js)',
+      Database_Administrator: '("Database Administrator" OR "DBA" OR "Database Engineer" OR "Database Specialist" OR "SQL Administrator") AND (SQL OR Oracle OR MySQL OR "Database Management")',
+      DevOps_engineer: '("DevOps") AND ("CI/CD" OR "Jenkins" OR "GitLab" OR "Docker" OR "Kubernetes" OR "Terraform" OR "Ansible") AND ("Azure" OR "AWS" OR "GCP")',
+      Frontend_Developer: '("Frontend Developer" OR "UI Developer") AND ("JavaScript" OR "java script" OR React OR Angular OR Vue)',
+      Incident_Manager: '("Incident Manager") AND ("Incident Response" OR "Problem Management")',
+      Infrastructure_Engineer: '("Infrastructure Engineer" OR "IT Infrastructure Engineer" OR "Systems Infrastructure Engineer" OR "Cloud Infrastructure Engineer" OR "Infrastructure Specialist") AND (Cloud OR Networking OR Servers)',
+      iOS_Developer: '(iOS) AND (Swift) AND ("Objective-C" OR "ObjC" OR "Obj-C" OR "Objective C")',
+      Program_Manager: '("Program Manager") AND (Agile OR Scrum OR PMP)',
+      Project_Manager: '("Project Manager") AND (Agile OR Scrum OR PMP OR SDLC)',
+      Support_Specialist: '("IT Support Specialist" OR "Technical Support") AND (Helpdesk OR Troubleshooting)',
+      Java_Developer: '("Java Developer" OR "Java Engineer") AND (Java)',
+      Java_Fullstack: '("Full Stack" OR "FullStack") AND (Java) AND (Spring) AND (Angular OR React)',
+      Manual_tester: '("Manual Tester") AND (Manual Testing OR Test Cases)',
+      Machine_Learning_Engineer: '("Machine Learning Engineer" OR "ML Engineer") AND (Python OR TensorFlow OR PyTorch OR Scikit-learn)',
+      Mobile_Developer: '(Android OR iOS) AND ("React Native")',
+      Network_Admin: '("Network Administrator") AND (Cisco OR Routing OR Switching)',
+      Network_Security_Engineer: '("Network Security Engineer" OR "Cybersecurity Engineer" OR "Security Network Engineer" OR "Information Security Engineer") AND (Cisco OR Firewall OR VPN)',
+      PHP_Developer: '("PHP Developer") AND (PHP)',
+      Product_Manager: '("Product Manager") AND (Agile OR Roadmap OR Stakeholders)',
+      Product_Owner: '("Product Owner") AND (Scrum OR Backlog OR Prioritization)',
+      Python_Developer: '("Python Developer" OR "Python Engineer") AND (Python)',
+      QA_Engineer: '("Quality Assurance Engineer" OR "QA Engineer") AND (Manual Testing OR Automation)',
+      Security_Architect: '("Security Architect" OR "Cybersecurity Architect" OR "Information Security Architect" OR "Cloud Security Architect" OR "Enterprise Security Architect") AND (Firewall OR IDS OR Risk Management)',
+      Software_Tester: '("Software Tester") AND (Testing OR Manual Testing OR Automation)',
+      SRE: '("Site Reliability Engineer" OR "SRE") AND (Kubernetes OR Monitoring OR Automation)',
+      Systems_Admin: '("Systems Administrator" OR "System Administrator" OR "SysAdmin" OR "IT Administrator") AND (Linux OR Windows OR Active Directory)',
+      Technical_Support_Engineer: '("Technical Support Engineer") AND (Hardware OR Software OR Troubleshooting)',
+      Test_Automation_Engineer: '("Software Tester" OR "QA Tester" OR "Manual Tester" OR "Test Engineer") AND (Selenium OR Jenkins OR Automation)',
+      UIUX_Designer: '("UI/UX" OR "UX/UI" OR "User Interface" OR "User Experience" OR "UI Designer" OR "UX Designer")'
+    };
+
+    const roleSelect = document.getElementById('role');
+
+    const sortedRoles = Object.keys(booleanStrings).map(key => {
+      return { key, name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) };
+    }).sort((a, b) => a.name.localeCompare(b.name));
+
+    sortedRoles.forEach(({ key, name }) => {
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = name;
+      roleSelect.appendChild(option);
+    });
+
+    function generateBoolean() {
+      const role = document.getElementById('role').value;
+      document.getElementById('boolean').value = booleanStrings[role] || '';
+    }
+
+    async function copyToClipboard() {
+      const text = document.getElementById('boolean').value;
+      if (text) {
+        await navigator.clipboard.writeText(text);
+        alert('Copied to clipboard!');
+      } else {
+        alert('Nothing to copy!');
+      }
+    }
+  </script>
+
+</body>
+</html>
